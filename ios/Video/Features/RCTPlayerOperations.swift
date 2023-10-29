@@ -222,7 +222,7 @@ enum RCTPlayerOperations {
             } catch {
             }
         }
-        // Now Playing Info
+         // Now Playing Info
         var nowPlayingInfo = [String : Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = "Your Audio Title"
 
