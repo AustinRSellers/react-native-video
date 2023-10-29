@@ -8,7 +8,7 @@ let RCTVideoUnset = -1
  * Collection of mutating functions
  */
 enum RCTPlayerOperations {
-    
+
     static func setSideloadedText(player:AVPlayer?, textTracks:[TextTrack]?, criteria:SelectedTrackCriteria?) {
         let type = criteria?.type
         let textTracks:[TextTrack]! = textTracks ?? RCTVideoUtils.getTextTrackInfo(player)
@@ -22,9 +22,9 @@ enum RCTPlayerOperations {
                 break
             }
         }
-        
+
         var selectedTrackIndex:Int = RCTVideoUnset
-        
+
         if (type == "disabled") {
             // Select the last text index which is the disabled text track
             selectedTrackIndex = trackCount - firstTextIndex
@@ -53,7 +53,7 @@ enum RCTPlayerOperations {
                 }
             }
         }
-        
+
         // in the situation that a selected text track is not available (eg. specifies a textTrack not available)
         if (type != "disabled") && selectedTrackIndex == RCTVideoUnset {
             let captioningMediaCharacteristics = MACaptionAppearanceCopyPreferredCaptioningMediaCharacteristics(.user)
@@ -70,7 +70,7 @@ enum RCTPlayerOperations {
                 }
             }
         }
-                
+
         for i in firstTextIndex..<(trackCount) {
             var isEnabled = false
             if selectedTrackIndex != RCTVideoUnset {
@@ -79,13 +79,13 @@ enum RCTPlayerOperations {
             player?.currentItem?.tracks[i].isEnabled = isEnabled
         }
     }
-    
+
     // UNUSED
     static func setStreamingText(player:AVPlayer?, criteria:SelectedTrackCriteria?) {
         let type = criteria?.type
         let group:AVMediaSelectionGroup! = player?.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible)
         var mediaOption:AVMediaSelectionOption!
-        
+
         if (type == "disabled") {
             // Do nothing. We want to ensure option is nil
         } else if (type == "language") || (type == "title") {
@@ -117,7 +117,7 @@ enum RCTPlayerOperations {
                 return
             #endif
         }
-        
+
         #if os(iOS)
             // Do noting. Fix for tvOS native audio menu language selector
         #else
@@ -125,14 +125,14 @@ enum RCTPlayerOperations {
             player?.currentItem?.select(mediaOption, in:group)
         #endif
     }
-    
+
     static func setMediaSelectionTrackForCharacteristic(player:AVPlayer?, characteristic:AVMediaCharacteristic, criteria:SelectedTrackCriteria?) {
         let type = criteria?.type
         let group:AVMediaSelectionGroup! = player?.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: characteristic)
         var mediaOption:AVMediaSelectionOption!
 
         guard group != nil else { return }
-        
+
         if (type == "disabled") {
             // Do nothing. We want to ensure option is nil
         } else if (type == "language") || (type == "title") {
@@ -162,12 +162,12 @@ enum RCTPlayerOperations {
             player?.currentItem?.selectMediaOptionAutomatically(in: group)
             return
         }
-        
+
         if let group = group {
             // If a match isn't found, option will be nil and text tracks will be disabled
             player?.currentItem?.select(mediaOption, in:group)
         }
-        
+
     }
 
     static func seek(player: AVPlayer, playerItem:AVPlayerItem, paused:Bool, seekTime:Float, seekTolerance:Float) -> Promise<Bool> {
@@ -175,7 +175,7 @@ enum RCTPlayerOperations {
         let cmSeekTime:CMTime = CMTimeMakeWithSeconds(Float64(seekTime), preferredTimescale: Int32(timeScale))
         let current:CMTime = playerItem.currentTime()
         let tolerance:CMTime = CMTimeMake(value: Int64(seekTolerance), timescale: Int32(timeScale))
-        
+
         return Promise<Bool>(on: .global()) { fulfill, reject in
             guard CMTimeCompare(current, cmSeekTime) != 0 else {
                 reject(NSError(domain: "", code: 0, userInfo: nil))
@@ -188,24 +188,24 @@ enum RCTPlayerOperations {
             })
         }
     }
-    
+
     static func configureAudio(ignoreSilentSwitch:String, mixWithOthers:String) {
         let session:AVAudioSession! = AVAudioSession.sharedInstance()
         var category:AVAudioSession.Category? = nil
         var options:AVAudioSession.CategoryOptions? = nil
-        
+
         if (ignoreSilentSwitch == "ignore") {
             category = AVAudioSession.Category.playback
         } else if (ignoreSilentSwitch == "obey") {
             category = AVAudioSession.Category.ambient
         }
-        
+
         if (mixWithOthers == "mix") {
             options = .mixWithOthers
         } else if (mixWithOthers == "duck") {
             options = .duckOthers
         }
-        
+
         if let category = category, let options = options {
             do {
                 try session.setCategory(category, options: options)
@@ -222,5 +222,13 @@ enum RCTPlayerOperations {
             } catch {
             }
         }
+        // Now Playing Info
+        var nowPlayingInfo = [String : Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = "Your Audio Title"
+
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+
+        // Remote Command Center
+        let commandCenter = MPRemoteCommandCenter.shared()
     }
 }
