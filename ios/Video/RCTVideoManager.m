@@ -24,6 +24,8 @@ RCT_EXPORT_VIEW_PROPERTY(preferredForwardBufferDuration, float);
 RCT_EXPORT_VIEW_PROPERTY(playWhenInactive, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(pictureInPicture, BOOL);
 RCT_EXPORT_VIEW_PROPERTY(ignoreSilentSwitch, NSString);
+RCT_EXPORT_VIEW_PROPERTY(videoArtist, NSString);
+RCT_EXPORT_VIEW_PROPERTY(videoThumbnail, NSString);
 RCT_EXPORT_VIEW_PROPERTY(videoTitle, NSString);
 RCT_EXPORT_VIEW_PROPERTY(mixWithOthers, NSString);
 RCT_EXPORT_VIEW_PROPERTY(rate, float);

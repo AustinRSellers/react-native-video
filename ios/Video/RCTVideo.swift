@@ -53,6 +53,8 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     private var _preferredForwardBufferDuration:Float = 0.0
     private var _playWhenInactive:Bool = false
     private var _videoTitle:String! = "Default Title"
+    private var _videoArtist:String! = "Default Artist"
+    private var _videoThumbnail:String! = "https://discipleme-images.s3.amazonaws.com/mobile/assets/default.png"
     private var _ignoreSilentSwitch:String! = "inherit" // inherit, ignore, obey
     private var _mixWithOthers:String! = "inherit" // inherit, mix, duck
     private var _resizeMode:String! = "AVLayerVideoGravityResizeAspectFill"
@@ -207,13 +209,21 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
             }
         }
     }
-    func updateNowPlayingInfo(title: String, artist: String) {
-        var nowPlayingInfo = [String : Any]()
+    func updateNowPlayingInfo(title: String, artist: String, thumbnailUrl: String) {
+        var nowPlayingInfo = [String: Any]()
         nowPlayingInfo[MPMediaItemPropertyTitle] = title
         nowPlayingInfo[MPMediaItemPropertyArtist] = artist
-        // Add more metadata as needed
+
+        if let url = URL(string: thumbnailUrl), let data = try? Data(contentsOf: url), let image = UIImage(data: data) {
+            let artwork = MPMediaItemArtwork(boundsSize: image.size, requestHandler: { _ -> UIImage in
+                return image
+            })
+            nowPlayingInfo[MPMediaItemPropertyArtwork] = artwork
+        }
+
         MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
+
 
     func setupRemoteTransportControls() {
         let commandCenter = MPRemoteCommandCenter.shared()
@@ -420,6 +430,16 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     }
 
     @objc
+    func setVideoArtist(_ videoArtist:String) {
+        _videoArtist = videoArtist
+    }
+
+    @objc
+    func setVideoThumbnail(_ videoThumbnail:String) {
+        _videoThumbnail = videoThumbnail
+    }
+
+    @objc
     func setPlayInBackground(_ playInBackground:Bool) {
         _playInBackground = playInBackground
     }
@@ -612,7 +632,9 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
         setPaused(_paused)
         setAllowsExternalPlayback(_allowsExternalPlayback)
         setVideoTitle(_videoTitle);
-        updateNowPlayingInfo(title: _videoTitle, artist: "test")
+        setVideoArtist(_videoArtist);
+        setVideoThumbnail(_videoThumbnail);
+        updateNowPlayingInfo(title: _videoTitle, artist: _videoArtist, thumbnailUrl: _videoThumbnail)
     }
 
     @objc
