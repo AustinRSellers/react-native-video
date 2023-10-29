@@ -1,6 +1,8 @@
 import AVFoundation
 import MediaAccessibility
 import Promises
+import MediaPlayer
+
 
 let RCTVideoUnset = -1
 
