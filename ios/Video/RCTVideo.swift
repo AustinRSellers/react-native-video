@@ -4,6 +4,8 @@ import Foundation
 import GoogleInteractiveMediaAds
 import React
 import Promises
+import MediaPlayer
+
 
 class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverHandler {
 
@@ -107,6 +109,12 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     init(eventDispatcher:RCTEventDispatcher!) {
         super.init(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
 
+        // Initialize command center
+        commandCenter = MPRemoteCommandCenter.shared()
+
+        // Set up the play and pause commands
+        setupRemoteTransportControls()
+
         _imaAdsManager = RCTIMAAdsManager(video: self)
 
         _eventDispatcher = eventDispatcher
@@ -195,6 +203,29 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
             }
         }
     }
+
+    func setupRemoteTransportControls() {
+        let commandCenter = MPRemoteCommandCenter.shared()
+
+        commandCenter.playCommand.isEnabled = true
+        commandCenter.playCommand.addTarget { [weak self] event in
+            if let player = self?._player, player.rate == 0.0 {
+                player.play()
+                return .success
+            }
+            return .commandFailed
+        }
+
+        commandCenter.pauseCommand.isEnabled = true
+        commandCenter.pauseCommand.addTarget { [weak self] event in
+            if let player = self?._player, player.rate > 0.0 {
+                player.pause()
+                return .success
+            }
+            return .commandFailed
+        }
+    }
+
 
     // MARK: - Progress
 
