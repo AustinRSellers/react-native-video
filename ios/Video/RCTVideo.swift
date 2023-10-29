@@ -612,7 +612,7 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
         setPaused(_paused)
         setAllowsExternalPlayback(_allowsExternalPlayback)
         setVideoTitle(_videoTitle);
-        updateNowPlayingInfo("test", "test");
+        updateNowPlayingInfo(title: _videoTitle, artist: "test")
     }
 
     @objc
