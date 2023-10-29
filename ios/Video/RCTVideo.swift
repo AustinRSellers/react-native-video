@@ -52,6 +52,7 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     private var _preventsDisplaySleepDuringVideoPlayback:Bool = true
     private var _preferredForwardBufferDuration:Float = 0.0
     private var _playWhenInactive:Bool = false
+    private var _videoTitle:String! = "Default Title"
     private var _ignoreSilentSwitch:String! = "inherit" // inherit, ignore, obey
     private var _mixWithOthers:String! = "inherit" // inherit, mix, duck
     private var _resizeMode:String! = "AVLayerVideoGravityResizeAspectFill"
@@ -205,6 +206,13 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
                 onVideoAudioBecomingNoisy(["target": reactTag as Any])
             }
         }
+    }
+    func updateNowPlayingInfo(title: String, artist: String) {
+        var nowPlayingInfo = [String : Any]()
+        nowPlayingInfo[MPMediaItemPropertyTitle] = title
+        nowPlayingInfo[MPMediaItemPropertyArtist] = artist
+        // Add more metadata as needed
+        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
     }
 
     func setupRemoteTransportControls() {
@@ -407,6 +415,11 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
     }
 
     @objc
+    func setVideoTitle(_ videoTitle:String) {
+        _videoTitle = videoTitle
+    }
+
+    @objc
     func setPlayInBackground(_ playInBackground:Bool) {
         _playInBackground = playInBackground
     }
@@ -598,6 +611,8 @@ class RCTVideo: UIView, RCTVideoPlayerViewControllerDelegate, RCTPlayerObserverH
         setControls(_controls)
         setPaused(_paused)
         setAllowsExternalPlayback(_allowsExternalPlayback)
+        setVideoTitle(_videoTitle);
+        updateNowPlayingInfo("test", "test");
     }
 
     @objc

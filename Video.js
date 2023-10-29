@@ -512,6 +512,7 @@ Video.propTypes = {
   playInBackground: PropTypes.bool,
   preferredForwardBufferDuration: PropTypes.number,
   playWhenInactive: PropTypes.bool,
+  videoTitle: PropTypes.string,
   ignoreSilentSwitch: PropTypes.oneOf(['ignore', 'obey']),
   reportBandwidth: PropTypes.bool,
   contentStartTime: PropTypes.number,

@@ -225,12 +225,12 @@ enum RCTPlayerOperations {
             }
         }
          // Now Playing Info
-        var nowPlayingInfo = [String : Any]()
-        nowPlayingInfo[MPMediaItemPropertyTitle] = "Your Audio Title"
+        //var nowPlayingInfo = [String : Any]()
+        //nowPlayingInfo[MPMediaItemPropertyTitle] = "Your Audio Title"
 
-        MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
+        //MPNowPlayingInfoCenter.default().nowPlayingInfo = nowPlayingInfo
 
         // Remote Command Center
-        let commandCenter = MPRemoteCommandCenter.shared()
+        //let commandCenter = MPRemoteCommandCenter.shared()
     }
 }
